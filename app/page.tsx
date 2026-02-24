@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "c:\Users\benja\Desktop\benfarsi.com\1769068731799.jpg";
-
+import Image from "next/image";
 const projects = [
   {
     category: "IoT · Hardware",
@@ -62,9 +61,7 @@ export default function Home() {
               <p className="hero__eyebrow">CS & Math · University of Ottawa</p>
               <h1 className="hero__name">Benjamin<br />Farsijani</h1>
               <p className="hero__bio">
-                i build software, hardware, and AI systems. from embedded
-                sensors to web platforms. interested in things that sit at the
-                edge of code and the physical world.
+                i enjoy building software, hardware, and ai systems.
               </p>
               <div className="hero__socials">
                 {socials.map((s) => (
