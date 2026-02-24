@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import Image from "c:\Users\benja\Desktop\benfarsi.com\1769068731799.jpg";
 
 const projects = [
   {
