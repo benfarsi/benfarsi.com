@@ -86,6 +86,20 @@ a {
   color: var(--fg);
 }
 
+.nav__link--resume {
+  color: var(--fg);
+  font-weight: 600;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.nav__link--resume:hover {
+  background: var(--surface);
+  border-color: #d1d5db;
+}
+
 /* ── HERO ────────────────────────────────────────────── */
 
 .hero {

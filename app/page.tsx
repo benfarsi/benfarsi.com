@@ -4,10 +4,31 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 const projects = [
   {
-    category: "IoT · Hardware",
-    title: "Environmental Monitoring System",
+    category: "IoT · Systems",
+    title: "Distributed Environmental Telemetry Platform",
     description:
-      "A distributed sensor network for real-time tracking of air quality, temperature, humidity, and atmospheric conditions, with a live web dashboard.",
+      "End-to-end IoT telemetry system ingesting data from STM32-based devices over HTTPS, with indexed PostgreSQL time-series storage, Dockerized multi-service backend, Nginx + TLS, and Prometheus/Grafana monitoring.",
+    link: null as string | null,
+  },
+  {
+    category: "Security · Systems",
+    title: "Secure IoT Authentication & Gateway",
+    description:
+      "Device authentication gateway with mutual TLS and signed provisioning. Hardened Linux server with SSH key-only auth, iptables isolation, and Fail2ban — with a formal threat model covering credential and DoS attack surfaces.",
+    link: null as string | null,
+  },
+  {
+    category: "Systems · Performance",
+    title: "High-Performance Concurrent Ingestion Engine",
+    description:
+      "Concurrent ingestion service sustaining 20,000 req/s via worker pools and connection pooling. Achieved 35% average latency reduction through memory profiling, goroutine optimization, and backpressure handling.",
+    link: null as string | null,
+  },
+  {
+    category: "Robotics · Control Systems",
+    title: "Autonomous Robotics Control Platform",
+    description:
+      "Closed-loop PID controller achieving sub-20ms real-time latency on embedded hardware, with multi-sensor fusion via Kalman filtering and benchmarked stability across disturbance conditions.",
     link: null as string | null,
   },
   {
@@ -16,13 +37,6 @@ const projects = [
     description:
       "An adaptive study platform powered by AI that personalizes learning through spaced repetition and active recall. Built with Next.js and GPT-4o.",
     link: "https://stade-ai.com",
-  },
-  {
-    category: "Robotics · Hardware",
-    title: "Autonomous Smart Dog Bowl",
-    description:
-      "A self-regulating pet care system using sensors to monitor water and food levels, automate refills, and log consumption over time.",
-    link: null as string | null,
   },
 ];
 
@@ -50,6 +64,7 @@ export default function Home() {
           <ul className="nav__links">
             <li><a className="nav__link" href="#projects">Projects</a></li>
             <li><a className="nav__link" href="#contact">Contact</a></li>
+            <li><a className="nav__link nav__link--resume" href="/resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a></li>
           </ul>
         </div>
       </nav>
