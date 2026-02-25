@@ -7,11 +7,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Benjamin Farsijani",
   description:
-    "CS & Math student at the University of Ottawa. Building software, hardware, and AI systems.",
+    "CS student at the University of Ottawa. Building software, hardware, and AI systems.",
   metadataBase: new URL("https://benfarsi.com"),
   openGraph: {
     title: "Benjamin Farsijani",
-    description: "CS & Math student at the University of Ottawa.",
+    description: "CS student at the University of Ottawa.",
     url: "https://benfarsi.com",
     siteName: "Benjamin Farsijani",
     type: "website",
