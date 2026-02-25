@@ -76,7 +76,7 @@ export default function Home() {
               <p className="hero__eyebrow">CS · University of Ottawa</p>
               <h1 className="hero__name">Benjamin<br />Farsijani</h1>
               <p className="hero__bio">
-                i enjoy building software, hardware, and ai systems.
+                I enjoy building software, hardware, and AI systems.
               </p>
               <div className="hero__socials">
                 {socials.map((s) => (
