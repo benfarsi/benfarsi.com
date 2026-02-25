@@ -91,6 +91,14 @@ export default function Home() {
                   </a>
                 ))}
               </div>
+              <a
+                className="hero__resume-btn"
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Resume <span className="cta-arrow">→</span>
+              </a>
             </div>
             <div className="hero__photo-wrap">
               <Image
