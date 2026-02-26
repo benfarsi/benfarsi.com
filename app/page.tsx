@@ -73,6 +73,7 @@ const projects: Project[] = [
       "Benchmarked controller stability under external disturbances (step inputs, impulse loads) and tuned derivative filtering to suppress high-frequency noise amplification.",
       "Designed a hardware abstraction layer over I2C and SPI peripherals to decouple control logic from sensor drivers, enabling unit testing of the control loop in simulation.",
     ],
+    github: "https://github.com/benfarsi/robotics-control-platform",
   },
   {
     category: "AI · Web",
