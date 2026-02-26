@@ -58,6 +58,7 @@ const projects: Project[] = [
       "Implemented backpressure handling — when the channel fills, the server returns 503 rather than queuing unboundedly, preventing cascading memory exhaustion.",
       "Benchmarked connection pool configurations against PostgreSQL under realistic write patterns to find optimal pool sizing relative to database max_connections.",
     ],
+    github: "https://github.com/benfarsi/ingestion-engine",
   },
   {
     category: "Robotics · Control Systems",
