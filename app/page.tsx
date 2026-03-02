@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 
 interface Project {
@@ -13,35 +13,50 @@ interface Project {
   live?: string;
 }
 
+interface Toast {
+  id: number;
+  msg: string;
+}
+
+interface Particle {
+  x: number; y: number;
+  vx: number; vy: number;
+  life: number; maxLife: number;
+  size: number; hue: number;
+}
+
+const CATEGORY_COLORS: Record<string, string> = {
+  "Embedded · IoT":            "#22c55e",
+  "Security · Systems":        "#ef4444",
+  "Systems · Performance":     "#3b82f6",
+  "Robotics · Control Systems": "#f59e0b",
+  "AI · Web":                  "#8b5cf6",
+};
+
 const projects: Project[] = [
   {
-    category: "IoT · Systems",
-    title: "Distributed Environmental Telemetry Platform",
+    category: "Embedded · IoT",
+    title: "Embedded Environmental Monitoring Device",
     summary:
-      "End-to-end IoT telemetry system ingesting sensor data from STM32-based devices over HTTPS, with indexed PostgreSQL time-series storage, Dockerized multi-service backend, and Prometheus/Grafana monitoring.",
-    tech: ["STM32", "C", "Go", "PostgreSQL", "Docker", "Nginx", "TLS", "Prometheus", "Grafana"],
+      "ESP32-based embedded platform integrating 4 sensors across I2C/UART buses — full hardware/software stack from schematic and enclosure to production classroom deployment with a sub-100ms real-time control loop.",
+    tech: ["C/C++", "ESP32", "UART", "I2C", "WiFi", "DHT11", "MH-Z19", "MAX9814", "Real-Time Systems"],
     highlights: [
-      "Designed a full-stack IoT pipeline from firmware to cloud dashboard — STM32 devices collect environmental data and transmit over HTTPS to a Go ingestion service.",
-      "Structured a PostgreSQL time-series schema with composite indexes to support high-frequency writes and efficient range queries across sensor streams.",
-      "Containerized all backend services with Docker Compose: ingestion API, database, Nginx reverse proxy, and Prometheus + Grafana monitoring stack.",
-      "Configured TLS termination at Nginx with automated cert management, keeping device communication encrypted end-to-end.",
-      "Built Grafana dashboards for real-time sensor visualization with alerting thresholds for anomaly detection.",
+      "Architected ESP32-based embedded platform integrating 4 sensors (DHT11, MH-Z19 via UART, MAX9814, air quality) across I2C/UART peripheral buses — owned full hardware/software stack from schematic and enclosure design to production classroom deployment.",
+      "Implemented sub-100ms real-time control loop with interrupt-driven sensor polling, threshold-based LED state machine (green/yellow/red + audible alarm), and 7-day fault-tolerant local data retention with WiFi telemetry offload.",
+      "Debugged hardware bring-up issues using serial monitoring and timing analysis — resolving I2C address conflicts, UART baud rate mismatches, and power rail noise affecting sensor accuracy during integration.",
     ],
     github: "https://github.com/benfarsi/environmental-reader",
   },
   {
     category: "Security · Systems",
-    title: "Secure IoT Authentication & Gateway",
+    title: "Secure IoT Network Gateway & Authentication Service",
     summary:
-      "Device authentication gateway with mutual TLS and a signed provisioning workflow. Hardened Linux host with SSH key-only auth, iptables firewall isolation, and Fail2ban — backed by a formal threat model.",
-    tech: ["Go", "Python", "mTLS", "TLS 1.3", "JWT (ES256)", "iptables", "Fail2ban", "systemd", "SQLite", "OpenSSL"],
+      "mTLS device authentication gateway with a signed provisioning workflow and multi-stage certificate validation pipeline on Linux — reduced unauthorized connection attempts by 85% under adversarial simulation.",
+    tech: ["Go", "Linux", "TLS/mTLS", "iptables", "SQLite", "Fail2ban", "SSH", "STRIDE", "OpenSSL"],
     highlights: [
-      "Built a Go gateway that enforces TLS 1.3 + mutual TLS on every connection — devices must present a CA-signed certificate before any request is processed.",
-      "Designed a Python provisioning pipeline: CA bootstrap (RSA-4096), per-device EC P-256 certificate issuance, and a SQLite device registry with revocation support.",
-      "Issued short-lived JWTs (ES256, 1-hour TTL) after mTLS authentication — all subsequent API calls require both the client cert and a valid Bearer token.",
-      "Reduced unauthorized connection attempts by 85% in simulated threat testing through per-IP rate limiting, Fail2ban banning on repeated auth failures, and iptables INPUT DROP defaults.",
-      "Hardened the host with SSH key-only auth, sysctl network stack hardening (SYN cookies, martian logging, ASLR), and systemd sandboxing (NoNewPrivileges, MemoryDenyWriteExecute).",
-      "Produced a formal STRIDE threat model covering credential leakage, denial-of-service, and certificate compromise attack surfaces.",
+      "Engineered mTLS device authentication gateway with signed provisioning workflow and multi-stage certificate validation pipeline on Linux; reduced unauthorized connection attempts by 85% under adversarial simulation.",
+      "Hardened OS attack surface via iptables network isolation, SSH key-only access, and Fail2ban intrusion blocking; implemented structured audit logging across all auth events enabling full forensic replay of security incidents.",
+      "Produced formal STRIDE threat model spanning 4 attack classes (credential leakage, DoS, replay, certificate compromise) — mapping protocol-level countermeasures to each threat vector with documented risk severity ratings.",
     ],
     github: "https://github.com/benfarsi/iot-auth-gateway-",
   },
@@ -49,14 +64,12 @@ const projects: Project[] = [
     category: "Systems · Performance",
     title: "High-Performance Concurrent Ingestion Engine",
     summary:
-      "Concurrent ingestion service sustaining 20,000 req/s via worker pools and connection pooling, with a 35% average latency reduction through memory profiling and backpressure handling.",
-    tech: ["Go", "PostgreSQL", "Worker Pools", "Connection Pooling", "pprof", "Goroutines", "Channels"],
+      "Concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling, with p95 latency cut 35% via pprof profiling and backpressure handling.",
+    tech: ["Go", "Rust", "PostgreSQL", "Linux", "Worker Pools", "Connection Pooling", "pprof", "Goroutines"],
     highlights: [
-      "Architected a worker-pool ingestion engine in Go — a fixed pool of goroutines drains a buffered channel, preventing goroutine explosion under burst load.",
-      "Achieved 20,000 sustained requests per second with p99 latency under 8ms on commodity hardware by tuning pool sizes against CPU and I/O saturation points.",
-      "Reduced average latency by 35% through memory profiling with pprof: eliminated high-allocation hot paths, introduced object pooling for request structs, and reduced GC pressure.",
-      "Implemented backpressure handling — when the channel fills, the server returns 503 rather than queuing unboundedly, preventing cascading memory exhaustion.",
-      "Benchmarked connection pool configurations against PostgreSQL under realistic write patterns to find optimal pool sizing relative to database max_connections.",
+      "Built concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling; benchmarked REST vs. message queue ingestion patterns under memory-constrained and high-throughput conditions.",
+      "Reduced p95 latency by 35% through heap allocation optimization and goroutine scheduling refinements identified via pprof CPU/memory profiling — eliminating head-of-line blocking under burst traffic.",
+      "Designed backpressure handling and graceful degradation under partial downstream failures, ensuring service stability and zero data loss during simulated outage scenarios.",
     ],
     github: "https://github.com/benfarsi/ingestion-engine",
   },
@@ -93,40 +106,190 @@ const projects: Project[] = [
 ];
 
 const socials = [
-  { label: "GitHub", href: "https://github.com/benfarsi" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/benfarsi" },
+  { label: "GitHub",    href: "https://github.com/benfarsi" },
+  { label: "LinkedIn",  href: "https://linkedin.com/in/benfarsi" },
   { label: "Instagram", href: "https://instagram.com/benfarsii" },
-  { label: "Email", href: "mailto:farsijaniben@gmail.com" },
+  { label: "Email",     href: "mailto:farsijaniben@gmail.com" },
 ];
 
-export default function Home() {
-  const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState<Project | null>(null);
+const BIO    = "I build software, hardware, and AI systems.";
+const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
 
+export default function Home() {
+  const [scrolled,   setScrolled]   = useState(false);
+  const [active,     setActive]     = useState<Project | null>(null);
+  const [typedText,  setTypedText]  = useState("");
+  const [cursorOn,   setCursorOn]   = useState(true);
+  const [photoSpin,  setPhotoSpin]  = useState(false);
+  const [toasts,     setToasts]     = useState<Toast[]>([]);
+
+  const logoClicksRef  = useRef(0);
+  const konamiRef      = useRef<string[]>([]);
+  const sudoRef        = useRef<string[]>([]);
+  const canvasRef      = useRef<HTMLCanvasElement>(null);
+  const particlesRef   = useRef<Particle[]>([]);
+  const rafRef         = useRef<number>(0);
+  const toastIdRef     = useRef(0);
+  const typingDoneRef  = useRef(false);
+
+  // ── Toast helper ────────────────────────────────────────────
+  const addToast = useCallback((msg: string) => {
+    const id = ++toastIdRef.current;
+    setToasts((t: Toast[]) => [...t, { id, msg }]);
+    setTimeout(() => setToasts((t: Toast[]) => t.filter((x: Toast) => x.id !== id)), 3200);
+  }, []);
+
+  // ── Console Easter egg ──────────────────────────────────────
+  useEffect(() => {
+    console.log(
+      "%c██████╗ ███████╗\n██╔══██╗██╔════╝\n██████╔╝█████╗  \n██╔══██╗██╔══╝  \n██████╔╝██║     \n╚═════╝ ╚═╝",
+      "color:#6b7280;font-family:monospace;line-height:1.4;font-size:11px;"
+    );
+    console.log(
+      "%cBenjamin Farsijani — benfarsi.com\nFound the console 👾   Hire me → farsijaniben@gmail.com",
+      "color:#0d0d0d;font-family:monospace;font-size:13px;"
+    );
+  }, []);
+
+  // ── Typewriter ──────────────────────────────────────────────
+  useEffect(() => {
+    if (typingDoneRef.current) return;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) { setTypedText(BIO); typingDoneRef.current = true; return; }
+    let i = 0;
+    const id = setInterval(() => {
+      if (i < BIO.length) { setTypedText(BIO.slice(0, ++i)); }
+      else { clearInterval(id); typingDoneRef.current = true; }
+    }, 55);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setCursorOn((c: boolean) => !c), 530);
+    return () => clearInterval(id);
+  }, []);
+
+  // ── Scroll ──────────────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // ── Modal ───────────────────────────────────────────────────
   const close = useCallback(() => setActive(null), []);
-
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") close(); };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKey);
-    };
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
   }, [active, close]);
+
+  // ── Easter egg keyboard listeners ───────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Konami code
+      konamiRef.current = [...konamiRef.current, e.key].slice(-10);
+      if (konamiRef.current.join(",") === KONAMI.join(",")) {
+        addToast("🎮 +1 life  //  konami unlocked");
+        document.body.classList.add("konami-flash");
+        setTimeout(() => document.body.classList.remove("konami-flash"), 900);
+        konamiRef.current = [];
+      }
+      // "sudo" Easter egg
+      if (e.key.length === 1) {
+        sudoRef.current = [...sudoRef.current, e.key.toLowerCase()].slice(-4);
+        if (sudoRef.current.join("") === "sudo") {
+          addToast("🔒 permission denied");
+          sudoRef.current = [];
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [addToast]);
+
+  // ── Sparkle cursor ──────────────────────────────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener("resize", resize, { passive: true });
+
+    const ctx = canvas.getContext("2d")!;
+    const onMove = (e: MouseEvent) => {
+      for (let i = 0; i < 4; i++) {
+        particlesRef.current.push({
+          x: e.clientX + (Math.random() - 0.5) * 10,
+          y: e.clientY + (Math.random() - 0.5) * 10,
+          vx: (Math.random() - 0.5) * 2,
+          vy: -Math.random() * 2.5 - 0.3,
+          life: 1,
+          maxLife: 35 + Math.random() * 25,
+          size: 1.5 + Math.random() * 2.5,
+          hue: Math.random() * 360,
+        });
+      }
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesRef.current = particlesRef.current.filter((p: Particle) => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.06;
+        p.life -= 1 / p.maxLife;
+        if (p.life <= 0) return false;
+        ctx.save();
+        ctx.globalAlpha = p.life * 0.65;
+        ctx.fillStyle = `hsl(${p.hue},75%,62%)`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return true;
+      });
+      rafRef.current = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
+  // ── Logo click Easter egg (7×) ──────────────────────────────
+  const handleLogoClick = () => {
+    logoClicksRef.current += 1;
+    if (logoClicksRef.current === 7) {
+      addToast("🌙 building in the dark since 2023");
+      logoClicksRef.current = 0;
+    }
+  };
+
+  // ── Photo double-click Easter egg ───────────────────────────
+  const handlePhotoDoubleClick = () => {
+    setPhotoSpin(true);
+    addToast("👋 hey!");
+    setTimeout(() => setPhotoSpin(false), 800);
+  };
 
   return (
     <>
+      <canvas ref={canvasRef} className="sparkle-canvas" aria-hidden="true" />
+
       <nav className={`nav${scrolled ? " nav--scrolled" : ""}`}>
         <div className="nav__inner">
-          <span className="nav__logo">BF</span>
+          <span
+            className="nav__logo"
+            onClick={handleLogoClick}
+            style={{ cursor: "default", userSelect: "none" }}
+          >
+            BF
+          </span>
           <ul className="nav__links">
             <li><a className="nav__link" href="#projects">Projects</a></li>
             <li><a className="nav__link" href="#contact">Contact</a></li>
@@ -143,9 +306,16 @@ export default function Home() {
         <section className="hero">
           <div className="hero__inner">
             <div className="hero__text">
+              <div className="hero__status">
+                <span className="hero__status-dot" />
+                Available for opportunities
+              </div>
               <p className="hero__eyebrow">CS · University of Ottawa</p>
               <h1 className="hero__name">Benjamin<br />Farsijani</h1>
-              <p className="hero__bio">I build software, hardware, and AI systems.</p>
+              <p className="hero__bio">
+                {typedText}
+                <span className="type-cursor" style={{ opacity: cursorOn ? 1 : 0 }} aria-hidden="true">|</span>
+              </p>
               <div className="hero__socials">
                 {socials.map((s) => (
                   <a
@@ -159,16 +329,51 @@ export default function Home() {
                   </a>
                 ))}
               </div>
+              <div className="hero__stats">
+                <div className="hero__stat">
+                  <span className="hero__stat-num">20K</span>
+                  <span className="hero__stat-label">req/s sustained</span>
+                </div>
+                <div className="hero__stat">
+                  <span className="hero__stat-num">35%</span>
+                  <span className="hero__stat-label">p95 latency cut</span>
+                </div>
+                <div className="hero__stat">
+                  <span className="hero__stat-num">85%</span>
+                  <span className="hero__stat-label">attacks blocked</span>
+                </div>
+              </div>
             </div>
-            <div className="hero__photo-wrap">
-              <Image
-                src="/photo.jpg"
-                alt="Benjamin Farsijani"
-                width={240}
-                height={240}
-                className="hero__photo"
-                priority
-              />
+
+            <div className="hero__right">
+              <div className="hero__photo-wrap">
+                <Image
+                  src="/photo.jpg"
+                  alt="Benjamin Farsijani"
+                  width={240}
+                  height={240}
+                  className={`hero__photo${photoSpin ? " hero__photo--spin" : ""}`}
+                  priority
+                  onDoubleClick={handlePhotoDoubleClick}
+                />
+              </div>
+              <div className="hero__terminal" aria-hidden="true">
+                <div className="hero__terminal-bar">
+                  <span className="t-dot t-dot--red" />
+                  <span className="t-dot t-dot--yellow" />
+                  <span className="t-dot t-dot--green" />
+                  <span className="hero__terminal-title">~/projects</span>
+                </div>
+                <div className="hero__terminal-body">
+                  <div><span className="t-prompt">$</span> gcc sensors.c -O2</div>
+                  <div><span className="t-ok">→</span> loop: 94ms ✓</div>
+                  <div><span className="t-prompt">$</span> ./gateway --mtls</div>
+                  <div><span className="t-ok">→</span> blocked: 85% ✓</div>
+                  <div><span className="t-prompt">$</span> wrk -t12 :8080</div>
+                  <div><span className="t-ok">→</span> 20k req/s ✓</div>
+                  <div><span className="t-prompt">$</span><span className="t-blink">_</span></div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -184,7 +389,13 @@ export default function Home() {
                   onClick={() => setActive(p)}
                   aria-label={`View details for ${p.title}`}
                 >
-                  <p className="project-card__category">{p.category}</p>
+                  <p className="project-card__category">
+                    <span
+                      className="category-dot"
+                      style={{ background: CATEGORY_COLORS[p.category] ?? "#6b7280" }}
+                    />
+                    {p.category}
+                  </p>
                   <h2 className="project-card__title">{p.title}</h2>
                   <p className="project-card__desc">{p.summary}</p>
                   <span className="project-card__cta">
@@ -217,19 +428,25 @@ export default function Home() {
 
       {active && (
         <div className="modal-overlay" onClick={close} role="dialog" aria-modal="true">
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" onClick={(e: { stopPropagation(): void }) => e.stopPropagation()}>
             <div className="modal__header">
-              <p className="modal__category">{active.category}</p>
+              <p className="modal__category">
+                <span
+                  className="category-dot"
+                  style={{ background: CATEGORY_COLORS[active.category] ?? "#6b7280" }}
+                />
+                {active.category}
+              </p>
               <button className="modal__close" onClick={close} aria-label="Close">✕</button>
             </div>
             <h2 className="modal__title">{active.title}</h2>
             <div className="modal__tech">
-              {active.tech.map((t) => (
+              {active.tech.map((t: string) => (
                 <span key={t} className="modal__tag">{t}</span>
               ))}
             </div>
             <ul className="modal__highlights">
-              {active.highlights.map((h, i) => (
+              {active.highlights.map((h: string, i: number) => (
                 <li key={i}>{h}</li>
               ))}
             </ul>
@@ -250,6 +467,12 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <div className="toast-container" aria-live="polite">
+        {toasts.map((t: Toast) => (
+          <div key={t.id} className="toast">{t.msg}</div>
+        ))}
+      </div>
     </>
   );
 }
