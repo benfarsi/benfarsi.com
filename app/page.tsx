@@ -296,7 +296,6 @@ export default function Home() {
           </span>
           <ul className="nav__links">
             <li><a className="nav__link" href="#projects">Projects</a></li>
-            <li><a className="nav__link" href="#contact">Contact</a></li>
             <li>
               <a className="nav__link nav__link--resume" href="/resume.pdf" target="_blank" rel="noopener noreferrer">
                 Resume
@@ -379,6 +378,7 @@ export default function Home() {
         <section className="projects" id="projects">
           <div className="projects__inner">
             <p className="section-label">Selected Work</p>
+            <h2 className="section-title">Projects</h2>
 
             <div className="filter-bar">
               {CATEGORIES.map((cat) => (
@@ -408,6 +408,7 @@ export default function Home() {
                   className="project-card"
                   onClick={() => setActive(p)}
                   aria-label={`View details for ${p.title}`}
+                  style={{ "--accent": CATEGORY_COLORS[p.category] } as React.CSSProperties}
                 >
                   <div className="card__snippet">
                     <span className="card__snippet-line">
@@ -456,7 +457,7 @@ export default function Home() {
 
       {active && (
         <div className="modal-overlay" onClick={close} role="dialog" aria-modal="true">
-          <div className="modal" onClick={(e: { stopPropagation(): void }) => e.stopPropagation()}>
+          <div className="modal" onClick={(e: { stopPropagation(): void }) => e.stopPropagation()} style={{ borderTopColor: CATEGORY_COLORS[active.category] ?? "var(--border)" }}>
             <div className="modal__header">
               <p className="modal__category">
                 <span
