@@ -38,12 +38,12 @@ const projects: Project[] = [
     category: "Embedded · IoT",
     title: "Embedded Environmental Monitoring Device",
     summary:
-      "ESP32-based embedded platform integrating 4 sensors across I2C/UART buses — full hardware/software stack from schematic and enclosure to production classroom deployment with a sub-100ms real-time control loop.",
-    tech: ["C/C++", "ESP32", "UART", "I2C", "WiFi", "DHT11", "MH-Z19", "MAX9814", "Real-Time Systems"],
+      "Wall-mounted, lithium battery-powered ESP32 device with BME680 (temp, humidity, AQI) and MAX9814 (noise) deployed in an early childcare home — streams live data to the Celsius mobile app with 3D printed interactive enclosure accessories.",
+    tech: ["C/C++", "ESP32", "I2C", "BME680", "MAX9814", "WiFi", "Lithium Battery", "3D Printing"],
     highlights: [
-      "Architected ESP32-based embedded platform integrating 4 sensors (DHT11, MH-Z19 via UART, MAX9814, air quality) across I2C/UART peripheral buses — owned full hardware/software stack from schematic and enclosure design to production classroom deployment.",
-      "Implemented sub-100ms real-time control loop with interrupt-driven sensor polling, threshold-based LED state machine (green/yellow/red + audible alarm), and 7-day fault-tolerant local data retention with WiFi telemetry offload.",
-      "Debugged hardware bring-up issues using serial monitoring and timing analysis — resolving I2C address conflicts, UART baud rate mismatches, and power rail noise affecting sensor accuracy during integration.",
+      "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 (temperature, humidity, AQI) and MAX9814 (ambient noise) over I2C — installed in an early childcare home to continuously monitor classroom environmental conditions.",
+      "Streamed sensor data over WiFi with persistent logging to the Celsius mobile application, enabling caregivers to track real-time and historical environmental readings from any device.",
+      "Built 3D printed enclosure accessories designed to engage young children — making the device interactive and approachable in an early childcare environment.",
     ],
     github: "https://github.com/benfarsi/environmental-reader",
   },
