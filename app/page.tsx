@@ -11,6 +11,8 @@ interface Project {
   highlights: string[];
   github?: string;
   live?: string;
+  cmd: string;
+  out: string;
 }
 
 interface Toast {
@@ -18,34 +20,38 @@ interface Toast {
   msg: string;
 }
 
-interface Particle {
-  x: number; y: number;
-  vx: number; vy: number;
-  life: number; maxLife: number;
-  size: number; hue: number;
-}
-
 const CATEGORY_COLORS: Record<string, string> = {
-  "Embedded · IoT":            "#22c55e",
-  "Security · Systems":        "#ef4444",
-  "Systems · Performance":     "#3b82f6",
+  "Embedded · IoT":             "#22c55e",
+  "Security · Systems":         "#ef4444",
+  "Systems · Performance":      "#3b82f6",
   "Robotics · Control Systems": "#f59e0b",
-  "AI · Web":                  "#8b5cf6",
+  "AI · Web":                   "#8b5cf6",
 };
+
+const CATEGORIES = ["All", ...Object.keys(CATEGORY_COLORS)];
+
+const STATS = [
+  { target: 50, suffix: "K", label: "concurrent conns" },
+  { target: 20, suffix: "K", label: "req/s sustained"  },
+  { target: 35, suffix: "%", label: "p95 latency cut"  },
+  { target: 85, suffix: "%", label: "attacks blocked"  },
+];
 
 const projects: Project[] = [
   {
     category: "Embedded · IoT",
     title: "Embedded Environmental Monitoring Device",
     summary:
-      "Wall-mounted, lithium battery-powered ESP32 device with BME680 (temp, humidity, AQI) and MAX9814 (noise) deployed in an early childcare home — streams live data to the Celsius mobile app with 3D printed interactive enclosure accessories.",
+      "Wall-mounted, lithium battery-powered ESP32 with BME680 (temp/humidity/AQI) and MAX9814 (noise) deployed in an early childcare home — live data streamed to the Celsius mobile app via WiFi with 3D printed interactive accessories.",
     tech: ["C/C++", "ESP32", "I2C", "BME680", "MAX9814", "WiFi", "Lithium Battery", "3D Printing"],
     highlights: [
-      "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 (temperature, humidity, AQI) and MAX9814 (ambient noise) over I2C — installed in an early childcare home to continuously monitor classroom environmental conditions.",
+      "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 (temperature, humidity, AQI) and MAX9814 (ambient noise) over I2C; deployed in an early childcare home to continuously monitor classroom environmental conditions.",
       "Streamed sensor data over WiFi with persistent logging to the Celsius mobile application, enabling caregivers to track real-time and historical environmental readings from any device.",
-      "Built 3D printed enclosure accessories designed to engage young children — making the device interactive and approachable in an early childcare environment.",
+      "Built 3D printed enclosure accessories designed to engage young children, making the device interactive and approachable in an early childcare environment.",
     ],
     github: "https://github.com/benfarsi/environmental-reader",
+    cmd: "./monitor --deploy",
+    out: "BME680: 22°C 55%RH ✓",
   },
   {
     category: "Security · Systems",
@@ -59,19 +65,8 @@ const projects: Project[] = [
       "Produced formal STRIDE threat model spanning 4 attack classes (credential leakage, DoS, replay, certificate compromise) — mapping protocol-level countermeasures to each threat vector with documented risk severity ratings.",
     ],
     github: "https://github.com/benfarsi/iot-auth-gateway-",
-  },
-  {
-    category: "Systems · Performance",
-    title: "High-Performance Concurrent Ingestion Engine",
-    summary:
-      "Concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling, with p95 latency cut 35% via pprof profiling and backpressure handling.",
-    tech: ["Go", "Rust", "PostgreSQL", "Linux", "Worker Pools", "Connection Pooling", "pprof", "Goroutines"],
-    highlights: [
-      "Built concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling; benchmarked REST vs. message queue ingestion patterns under memory-constrained and high-throughput conditions.",
-      "Reduced p95 latency by 35% through heap allocation optimization and goroutine scheduling refinements identified via pprof CPU/memory profiling — eliminating head-of-line blocking under burst traffic.",
-      "Designed backpressure handling and graceful degradation under partial downstream failures, ensuring service stability and zero data loss during simulated outage scenarios.",
-    ],
-    github: "https://github.com/benfarsi/ingestion-engine",
+    cmd: "./gateway --mtls on",
+    out: "blocked: 85% ✓",
   },
   {
     category: "Systems · Performance",
@@ -86,6 +81,23 @@ const projects: Project[] = [
       "Engineered a blocking accept loop feeding a non-blocking epoll event plane: listener fd blocks in Accept4 (no busy-wait), accepted fds are SOCK_NONBLOCK and backend fds are dup'd away from Go's internal netpoll to prevent scheduler interference.",
     ],
     github: "https://github.com/benfarsi/tcp-lb",
+    cmd: "./tcp-lb -algo leastconn",
+    out: "50k conns ✓",
+  },
+  {
+    category: "Systems · Performance",
+    title: "High-Performance Concurrent Ingestion Engine",
+    summary:
+      "Concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling, with p95 latency cut 35% via pprof profiling and backpressure handling.",
+    tech: ["Go", "Rust", "PostgreSQL", "Linux", "Worker Pools", "Connection Pooling", "pprof", "Goroutines"],
+    highlights: [
+      "Built concurrent ingestion service sustaining 20,000 req/s under synthetic load using worker pools and connection pooling; benchmarked REST vs. message queue ingestion patterns under memory-constrained and high-throughput conditions.",
+      "Reduced p95 latency by 35% through heap allocation optimization and goroutine scheduling refinements identified via pprof CPU/memory profiling — eliminating head-of-line blocking under burst traffic.",
+      "Designed backpressure handling and graceful degradation under partial downstream failures, ensuring service stability and zero data loss during simulated outage scenarios.",
+    ],
+    github: "https://github.com/benfarsi/ingestion-engine",
+    cmd: "wrk -t12 -c400 :8080",
+    out: "20k req/s  p95: 4ms ✓",
   },
   {
     category: "Robotics · Control Systems",
@@ -101,6 +113,8 @@ const projects: Project[] = [
       "Designed a hardware abstraction layer over I2C and SPI peripherals to decouple control logic from sensor drivers, enabling unit testing of the control loop in simulation.",
     ],
     github: "https://github.com/benfarsi/robotics-control-platform",
+    cmd: "./controller --pid --fifo",
+    out: "loop: 18ms ✓",
   },
   {
     category: "AI · Web",
@@ -116,6 +130,8 @@ const projects: Project[] = [
     ],
     github: "https://github.com/benfarsi/stade.ai",
     live: "https://stade-ai.com",
+    cmd: "npm run dev",
+    out: "stade.ai ready on :3000 ✓",
   },
 ];
 
@@ -136,24 +152,25 @@ export default function Home() {
   const [cursorOn,   setCursorOn]   = useState(true);
   const [photoSpin,  setPhotoSpin]  = useState(false);
   const [toasts,     setToasts]     = useState<Toast[]>([]);
+  const [filter,     setFilter]     = useState("All");
+  const [counts,     setCounts]     = useState(STATS.map(() => 0));
+  const [statsReady, setStatsReady] = useState(false);
 
-  const logoClicksRef  = useRef(0);
-  const konamiRef      = useRef<string[]>([]);
-  const sudoRef        = useRef<string[]>([]);
-  const canvasRef      = useRef<HTMLCanvasElement>(null);
-  const particlesRef   = useRef<Particle[]>([]);
-  const rafRef         = useRef<number>(0);
-  const toastIdRef     = useRef(0);
-  const typingDoneRef  = useRef(false);
+  const logoClicksRef = useRef(0);
+  const konamiRef     = useRef<string[]>([]);
+  const sudoRef       = useRef<string[]>([]);
+  const toastIdRef    = useRef(0);
+  const typingDoneRef = useRef(false);
+  const statsRef      = useRef<HTMLDivElement>(null);
 
-  // ── Toast helper ────────────────────────────────────────────
+  // ── Toast ────────────────────────────────────────────
   const addToast = useCallback((msg: string) => {
     const id = ++toastIdRef.current;
     setToasts((t: Toast[]) => [...t, { id, msg }]);
     setTimeout(() => setToasts((t: Toast[]) => t.filter((x: Toast) => x.id !== id)), 3200);
   }, []);
 
-  // ── Console Easter egg ──────────────────────────────────────
+  // ── Console easter egg ───────────────────────────────
   useEffect(() => {
     console.log(
       "%c██████╗ ███████╗\n██╔══██╗██╔════╝\n██████╔╝█████╗  \n██╔══██╗██╔══╝  \n██████╔╝██║     \n╚═════╝ ╚═╝",
@@ -165,7 +182,7 @@ export default function Home() {
     );
   }, []);
 
-  // ── Typewriter ──────────────────────────────────────────────
+  // ── Typewriter ───────────────────────────────────────
   useEffect(() => {
     if (typingDoneRef.current) return;
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -183,14 +200,14 @@ export default function Home() {
     return () => clearInterval(id);
   }, []);
 
-  // ── Scroll ──────────────────────────────────────────────────
+  // ── Scroll ───────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Modal ───────────────────────────────────────────────────
+  // ── Modal ────────────────────────────────────────────
   const close = useCallback(() => setActive(null), []);
   useEffect(() => {
     if (!active) return;
@@ -200,10 +217,9 @@ export default function Home() {
     return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
   }, [active, close]);
 
-  // ── Easter egg keyboard listeners ───────────────────────────
+  // ── Easter egg keyboards ─────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Konami code
       konamiRef.current = [...konamiRef.current, e.key].slice(-10);
       if (konamiRef.current.join(",") === KONAMI.join(",")) {
         addToast("🎮 +1 life  //  konami unlocked");
@@ -211,7 +227,6 @@ export default function Home() {
         setTimeout(() => document.body.classList.remove("konami-flash"), 900);
         konamiRef.current = [];
       }
-      // "sudo" Easter egg
       if (e.key.length === 1) {
         sudoRef.current = [...sudoRef.current, e.key.toLowerCase()].slice(-4);
         if (sudoRef.current.join("") === "sudo") {
@@ -224,58 +239,32 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [addToast]);
 
-  // ── Sparkle cursor ──────────────────────────────────────────
+  // ── Animated stats counter ───────────────────────────
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-    resize();
-    window.addEventListener("resize", resize, { passive: true });
-
-    const ctx = canvas.getContext("2d")!;
-    const onMove = (e: MouseEvent) => {
-      for (let i = 0; i < 4; i++) {
-        particlesRef.current.push({
-          x: e.clientX + (Math.random() - 0.5) * 10,
-          y: e.clientY + (Math.random() - 0.5) * 10,
-          vx: (Math.random() - 0.5) * 2,
-          vy: -Math.random() * 2.5 - 0.3,
-          life: 1,
-          maxLife: 35 + Math.random() * 25,
-          size: 1.5 + Math.random() * 2.5,
-          hue: Math.random() * 360,
-        });
-      }
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesRef.current = particlesRef.current.filter((p: Particle) => {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.06;
-        p.life -= 1 / p.maxLife;
-        if (p.life <= 0) return false;
-        ctx.save();
-        ctx.globalAlpha = p.life * 0.65;
-        ctx.fillStyle = `hsl(${p.hue},75%,62%)`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-        return true;
-      });
-      rafRef.current = requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(rafRef.current);
-    };
+    const el = statsRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStatsReady(true); },
+      { threshold: 0.6 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  // ── Logo click Easter egg (7×) ──────────────────────────────
+  useEffect(() => {
+    if (!statsReady) return;
+    const targets = STATS.map(s => s.target);
+    const steps   = 48;
+    let step      = 0;
+    const id = setInterval(() => {
+      step++;
+      setCounts(targets.map(t => Math.min(Math.round(t * step / steps), t)));
+      if (step >= steps) clearInterval(id);
+    }, 20);
+    return () => clearInterval(id);
+  }, [statsReady]);
+
+  // ── Easter eggs ──────────────────────────────────────
   const handleLogoClick = () => {
     logoClicksRef.current += 1;
     if (logoClicksRef.current === 7) {
@@ -284,17 +273,18 @@ export default function Home() {
     }
   };
 
-  // ── Photo double-click Easter egg ───────────────────────────
   const handlePhotoDoubleClick = () => {
     setPhotoSpin(true);
     addToast("👋 hey!");
     setTimeout(() => setPhotoSpin(false), 800);
   };
 
+  const filteredProjects = filter === "All"
+    ? projects
+    : projects.filter((p) => p.category === filter);
+
   return (
     <>
-      <canvas ref={canvasRef} className="sparkle-canvas" aria-hidden="true" />
-
       <nav className={`nav${scrolled ? " nav--scrolled" : ""}`}>
         <div className="nav__inner">
           <span
@@ -343,23 +333,13 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-              <div className="hero__stats">
-                <div className="hero__stat">
-                  <span className="hero__stat-num">50K</span>
-                  <span className="hero__stat-label">concurrent conns</span>
-                </div>
-                <div className="hero__stat">
-                  <span className="hero__stat-num">20K</span>
-                  <span className="hero__stat-label">req/s sustained</span>
-                </div>
-                <div className="hero__stat">
-                  <span className="hero__stat-num">35%</span>
-                  <span className="hero__stat-label">p95 latency cut</span>
-                </div>
-                <div className="hero__stat">
-                  <span className="hero__stat-num">85%</span>
-                  <span className="hero__stat-label">attacks blocked</span>
-                </div>
+              <div className="hero__stats" ref={statsRef}>
+                {STATS.map((s, i) => (
+                  <div key={s.label} className="hero__stat">
+                    <span className="hero__stat-num">{counts[i]}{s.suffix}</span>
+                    <span className="hero__stat-label">{s.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -399,14 +379,44 @@ export default function Home() {
         <section className="projects" id="projects">
           <div className="projects__inner">
             <p className="section-label">Selected Work</p>
+
+            <div className="filter-bar">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  className={`filter-btn${filter === cat ? " filter-btn--active" : ""}`}
+                  onClick={() => setFilter(cat)}
+                  style={filter === cat && cat !== "All"
+                    ? { borderColor: CATEGORY_COLORS[cat], color: CATEGORY_COLORS[cat] }
+                    : undefined}
+                >
+                  {cat !== "All" && (
+                    <span
+                      className="category-dot"
+                      style={{ background: CATEGORY_COLORS[cat] }}
+                    />
+                  )}
+                  {cat}
+                </button>
+              ))}
+            </div>
+
             <div className="projects-grid">
-              {projects.map((p) => (
+              {filteredProjects.map((p) => (
                 <button
                   key={p.title}
                   className="project-card"
                   onClick={() => setActive(p)}
                   aria-label={`View details for ${p.title}`}
                 >
+                  <div className="card__snippet">
+                    <span className="card__snippet-line">
+                      <span className="t-prompt">$</span> {p.cmd}
+                    </span>
+                    <span className="card__snippet-line">
+                      <span className="t-ok">→</span> {p.out}
+                    </span>
+                  </div>
                   <p className="project-card__category">
                     <span
                       className="category-dot"

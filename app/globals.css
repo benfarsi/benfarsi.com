@@ -452,13 +452,54 @@ a { color: inherit; text-decoration: none; }
   }
 }
 
-/* ── SPARKLE CANVAS ──────────────────────────────────── */
-.sparkle-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9998;
+/* ── FILTER BAR ──────────────────────────────────────── */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
 }
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 13px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.filter-btn:hover { background: var(--surface); color: var(--fg); }
+
+.filter-btn--active {
+  background: var(--surface);
+  color: var(--fg);
+  border-color: #d1d5db;
+}
+
+/* ── CARD SNIPPET ────────────────────────────────────── */
+.card__snippet {
+  background: #111;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Courier New', Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.75;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.card__snippet-line { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ── KONAMI RAINBOW FLASH ────────────────────────────── */
 @keyframes konami-rainbow {
