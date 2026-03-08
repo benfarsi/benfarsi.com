@@ -74,6 +74,20 @@ const projects: Project[] = [
     github: "https://github.com/benfarsi/ingestion-engine",
   },
   {
+    category: "Systems · Performance",
+    title: "Layer-4 TCP Load Balancer",
+    summary:
+      "Epoll-based TCP proxy in Go sustaining 50,000 concurrent connections with round-robin and least-connections scheduling — raw Linux epoll event loop, zero per-event allocations, N worker goroutines sharing one epoll fd.",
+    tech: ["Go", "Linux", "epoll", "TCP", "syscall", "Round-Robin", "Least-Connections", "Non-blocking I/O"],
+    highlights: [
+      "Built a Layer-4 TCP load balancer in Go using raw Linux epoll syscalls — single shared epoll fd multiplexed across N IO worker goroutines, sustaining 50,000 concurrent connections under synthetic load.",
+      "Implemented two lock-free scheduling algorithms: atomic round-robin (single AddUint64 counter) and least-connections (per-backend atomic active-connection counter), selectable at runtime with zero mutex overhead.",
+      "Achieved zero per-event heap allocations by giving each worker goroutine a dedicated scratch buffer — eliminating GC pressure at high connection counts and keeping p99 forwarding latency stable under load.",
+      "Engineered a blocking accept loop feeding a non-blocking epoll event plane: listener fd blocks in Accept4 (no busy-wait), accepted fds are SOCK_NONBLOCK and backend fds are dup'd away from Go's internal netpoll to prevent scheduler interference.",
+    ],
+    github: "https://github.com/benfarsi/tcp-lb",
+  },
+  {
     category: "Robotics · Control Systems",
     title: "Autonomous Robotics Control Platform",
     summary:
@@ -331,6 +345,10 @@ export default function Home() {
               </div>
               <div className="hero__stats">
                 <div className="hero__stat">
+                  <span className="hero__stat-num">50K</span>
+                  <span className="hero__stat-label">concurrent conns</span>
+                </div>
+                <div className="hero__stat">
                   <span className="hero__stat-num">20K</span>
                   <span className="hero__stat-label">req/s sustained</span>
                 </div>
@@ -369,8 +387,8 @@ export default function Home() {
                   <div><span className="t-ok">→</span> loop: 94ms ✓</div>
                   <div><span className="t-prompt">$</span> ./gateway --mtls</div>
                   <div><span className="t-ok">→</span> blocked: 85% ✓</div>
-                  <div><span className="t-prompt">$</span> wrk -t12 :8080</div>
-                  <div><span className="t-ok">→</span> 20k req/s ✓</div>
+                  <div><span className="t-prompt">$</span> ./tcp-lb -algo leastconn</div>
+                  <div><span className="t-ok">→</span> 50k conns ✓</div>
                   <div><span className="t-prompt">$</span><span className="t-blink">_</span></div>
                 </div>
               </div>
