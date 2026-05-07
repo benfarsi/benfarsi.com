@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -51,18 +51,15 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero__right">
-            <div className="hero__photo-wrap">
-              <Image
-                src="/photo.jpg"
-                alt="Benjamin Farsijani"
-                width={200}
-                height={200}
-                className="hero__photo"
-                priority
-              />
-            </div>
-            <DancingKirby />
+          <div className="hero__photo-wrap">
+            <Image
+              src="/photo.jpg"
+              alt="Benjamin Farsijani"
+              width={320}
+              height={400}
+              className="hero__photo"
+              priority
+            />
           </div>
         </div>
         <div className="scroll-indicator">
@@ -84,7 +81,7 @@ export default function Home() {
           <div className="pcard">
             <div className="pcard__top">
               <span className="pcard__name">Celsius</span>
-              <span className="pcard__badge badge-gold">1st Place · Design Day</span>
+              <span className="pcard__badge badge-gold">1st Place · $500 Prize</span>
             </div>
             <p className="pcard__desc">
               Deployed <em>IoT environmental monitoring system</em> for early childcare at the University of Ottawa,
@@ -283,7 +280,7 @@ export default function Home() {
 
           <ExpCard
             role="Field Technician"
-            org="Commercial Construction"
+            org="TPH Plumbing &amp; Heating"
             date="2022 · 2023"
             loc="Ottawa, ON"
             desc="Performed skilled technical work on large-scale commercial construction sites. Operated and maintained heavy equipment, executed precision installations to spec, and consistently delivered under physically demanding, deadline-driven conditions."
@@ -375,52 +372,3 @@ function ExpCard({ role, org, date, loc, desc }: {
   );
 }
 
-function DancingKirby() {
-  const [mood, setMood]     = useState<"idle" | "spin" | "bounce" | "wave">("idle");
-  const [clicks, setClicks] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const MOODS: Array<"spin" | "bounce" | "wave"> = ["spin", "bounce", "wave"];
-
-  const handleClick = useCallback(() => {
-    const next = clicks + 1;
-    setClicks(next);
-    const m = MOODS[next % MOODS.length];
-    setMood(m);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setMood("idle"), 900);
-  }, [clicks]);
-
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
-
-  const label = mood === "spin" ? "hey!" : mood === "bounce" ? "hired?" : mood === "wave" ? ":3" : "click me";
-
-  return (
-    <div className="kirby-wrap" onClick={handleClick}>
-      <div className="kirby-box">
-        <div className="kirby-box__bar">
-          <span className="kirby-dot" /><span className="kirby-dot" /><span className="kirby-dot" />
-          <span className="kirby-box__title">KIRBY.EXE</span>
-        </div>
-        <div className="kirby-stage">
-          <div className={`kirby-char kirby-char--${mood}`}>
-            <svg width="80" height="80" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="48" cy="58" rx="38" ry="33" fill="#FF69B4"/>
-              <ellipse cx="23" cy="64" rx="11" ry="7" fill="#FF1493" opacity=".45"/>
-              <ellipse cx="73" cy="64" rx="11" ry="7" fill="#FF1493" opacity=".45"/>
-              <ellipse cx="33" cy="50" rx="8"  ry="9.5" fill="#1a0820"/>
-              <ellipse cx="63" cy="50" rx="8"  ry="9.5" fill="#1a0820"/>
-              <circle  cx="31" cy="47" r="3.2" fill="white"/>
-              <circle  cx="61" cy="47" r="3.2" fill="white"/>
-              <path d="M30 68 Q48 80 66 68" stroke="#C71585" strokeWidth="3" fill="#FF4488" strokeLinecap="round"/>
-              <ellipse cx="24" cy="88" rx="15" ry="9" fill="#FF1493"/>
-              <ellipse cx="72" cy="88" rx="15" ry="9" fill="#FF1493"/>
-              <ellipse cx="8"  cy="62" rx="10" ry="7" fill="#FF69B4" transform="rotate(-20 8 62)"/>
-              <ellipse cx="88" cy="62" rx="10" ry="7" fill="#FF69B4" transform="rotate(20 88 62)"/>
-            </svg>
-          </div>
-          <div className="kirby-label">{label}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
