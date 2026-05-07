@@ -32,12 +32,12 @@ export const projects: Project[] = [
     category: "embedded · iot",
     title: "Embedded Environmental Monitoring Device",
     summary:
-      "Wall-mounted, lithium battery-powered ESP32 with BME680 (temp/humidity/AQI) and MAX9814 (noise) deployed in an early childcare home — live data streamed to the Celsius mobile app via WiFi with 3D printed interactive accessories.",
+      "Wall-mounted, lithium battery-powered ESP32 with BME680 (temp/humidity/AQI) and MAX9814 (noise) designed for early childcare monitoring — live data streamed to the Celsius mobile app via WiFi with 3D printed interactive accessories. Redeploy planned for new childcare centre location.",
     tech: ["C/C++", "ESP32", "I2C", "BME680", "MAX9814", "WiFi", "Lithium Battery", "3D Printing"],
     highlights: [
-      "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 and MAX9814 over I2C; deployed in an early childcare home to continuously monitor classroom environmental conditions.",
+      "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 and MAX9814 over I2C to continuously monitor classroom environmental conditions in an early childcare home.",
       "Streamed sensor data over WiFi with persistent logging to the Celsius mobile application, enabling caregivers to track real-time and historical environmental readings from any device.",
-      "Built 3D printed enclosure accessories designed to engage young children, making the device interactive and approachable in an early childcare environment.",
+      "Built 3D printed enclosure accessories designed to engage young children, making the device interactive and approachable. Currently awaiting redeploy to the childcare centre's new location after recent displacement.",
     ],
     github: "https://github.com/benfarsi/environmental-reader",
     cmd: "./monitor --deploy",
