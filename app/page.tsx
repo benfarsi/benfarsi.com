@@ -6,6 +6,9 @@ import Link from "next/link";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
@@ -31,8 +34,23 @@ export default function Home() {
             <li><a href="#contact"    className={isActive("contact")}>Contact</a></li>
           </ul>
           <a href="/resume.pdf" className="nav__resume" target="_blank" rel="noopener noreferrer">Resume</a>
+          <button
+            className={`nav__hamburger${menuOpen ? " open" : ""}`}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="toggle menu"
+          >
+            <span /><span /><span />
+          </button>
         </div>
       </nav>
+
+      <div className={`nav__mobile${menuOpen ? " open" : ""}`}>
+        <a href="#projects"   onClick={closeMenu}>Projects</a>
+        <a href="#skills"     onClick={closeMenu}>Stack</a>
+        <a href="#experience" onClick={closeMenu}>Experience</a>
+        <a href="#contact"    onClick={closeMenu}>Contact</a>
+        <a href="/resume.pdf" onClick={closeMenu} target="_blank" rel="noopener noreferrer">Resume</a>
+      </div>
 
       {/* HERO */}
       <section id="hero" className="hero">
