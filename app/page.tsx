@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -9,10 +10,8 @@ export default function Home() {
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
     const io = new IntersectionObserver(
-      entries => {
-        entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
-      },
-      { threshold: 0.35 }
+      entries => { entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); }); },
+      { threshold: 0.3 }
     );
     sections.forEach(s => io.observe(s));
     return () => io.disconnect();
@@ -31,19 +30,16 @@ export default function Home() {
             <li><a href="#experience" className={isActive("experience")}>Experience</a></li>
             <li><a href="#contact"    className={isActive("contact")}>Contact</a></li>
           </ul>
-          <a href="/resume.pdf" className="nav__resume" target="_blank" rel="noopener noreferrer">
-            Resume
-          </a>
+          <a href="/resume.pdf" className="nav__resume" target="_blank" rel="noopener noreferrer">Resume</a>
         </div>
       </nav>
 
+      {/* HERO */}
       <section id="hero" className="hero">
         <div className="hero__inner">
           <div className="hero__left">
             <div className="hero__eyebrow">Computer Science · University of Ottawa · 3.7 GPA</div>
-            <h1 className="hero__name">
-              Ben<br /><strong>Farsijani</strong>
-            </h1>
+            <h1 className="hero__name">Benjamin<br /><strong>Farsijani</strong></h1>
             <p className="hero__tagline">
               Building systems across <em>real-time ML infrastructure</em>,{" "}
               <em>embedded IoT</em>, and <em>threat network analytics</em>.
@@ -55,7 +51,19 @@ export default function Home() {
             </div>
           </div>
 
-          <DancingKirby />
+          <div className="hero__right">
+            <div className="hero__photo-wrap">
+              <Image
+                src="/photo.jpg"
+                alt="Benjamin Farsijani"
+                width={200}
+                height={200}
+                className="hero__photo"
+                priority
+              />
+            </div>
+            <DancingKirby />
+          </div>
         </div>
         <div className="scroll-indicator">
           <span>scroll</span>
@@ -63,6 +71,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PROJECTS */}
       <section id="projects" className="section">
         <div className="sec-header">
           <span className="sec-index">01</span>
@@ -85,7 +94,6 @@ export default function Home() {
               <li>Wall-mounted ESP32 integrating BME680 (temp, humidity, VOC) and MAX9814 (sound) over I2C; lithium-battery-powered with persistent WiFi streaming</li>
               <li>React Native mobile app for caregivers to monitor real-time and historical classroom readings from any device</li>
               <li>ML anomaly-detection layer flagging air-quality dips, noise spikes, and temperature excursions with real-time alerts</li>
-              <li>3D-printed enclosure designed to engage young children in an early-childcare environment</li>
             </ul>
             <div className="pcard__tags">
               <span className="ptag">C / C++</span>
@@ -108,9 +116,9 @@ export default function Home() {
               validated via 5-fold walk-forward cross-validation against a buy-and-hold baseline.
             </p>
             <ul className="pcard__bullets">
-              <li>50+ engineered features: GARCH(1,1) conditional volatility, Parkinson range estimator, VWAP deviation, OBV, ADX, Stochastic RSI, and multi-timeframe log returns with strict zero-lookahead construction</li>
+              <li>50+ engineered features: GARCH(1,1) volatility, Parkinson range estimator, VWAP deviation, OBV, ADX, Stochastic RSI, and multi-timeframe log returns with strict zero-lookahead construction</li>
               <li>Probability-gated risk layer: long if p &gt; 0.65, exit if p &lt; 0.35; 3% take-profit / 1.5% stop-loss; 0.1% fee modeling; per-symbol sizing across a $6,000 paper portfolio</li>
-              <li>Live containerized dashboard (Flask, Chart.js, Docker, PostgreSQL) tracking equity curve, per-symbol P&amp;L, and trade history; runs continuously against live Binance feeds</li>
+              <li>Live containerized dashboard (Flask, Chart.js, Docker, PostgreSQL) tracking equity curve, per-symbol P&amp;L, and trade history against live Binance feeds</li>
             </ul>
             <div className="pcard__tags">
               <span className="ptag">Python</span>
@@ -120,7 +128,7 @@ export default function Home() {
               <span className="ptag">Flask</span>
               <span className="ptag">CCXT</span>
             </div>
-            <span className="pcard__link pcard__link--private">Private Repository</span>
+            <span className="pcard__link pcard__link--private">Private</span>
           </div>
 
           <div className="pcard">
@@ -133,9 +141,8 @@ export default function Home() {
               targeting a 5-10% reduction in steam-to-oil ratio vs. heuristic baselines.
             </p>
             <ul className="pcard__bullets">
-              <li>Stochastic simulation modeling delayed nonlinear dynamics: steam injection to reservoir temperature to production output; 100k+ synthetic multivariate time-series observations generated for control experimentation</li>
+              <li>Stochastic environment modeling delayed nonlinear dynamics: steam injection to reservoir temperature to production output; 100k+ synthetic multivariate time-series observations</li>
               <li>Constrained MPC with a learned PyTorch state-space model solved in CasADi, optimizing steam injection policies under physical constraints</li>
-              <li>Researched partially observed dynamical systems, stochastic optimization, and sequential decision-making for adaptive industrial process control</li>
             </ul>
             <div className="pcard__tags">
               <span className="ptag">Python</span>
@@ -158,9 +165,9 @@ export default function Home() {
               during the Iranian Revolution (1979-1981) via GDELT event data.
             </p>
             <ul className="pcard__bullets">
-              <li>Ingested GDELT 1.0 bulk data (1979-1981) into a directed weighted NetworkX graph; nodes typed by CAMEO actor codes across Government, Military, Religious, and Opposition factions</li>
+              <li>Ingested GDELT 1.0 bulk data into a directed weighted NetworkX graph; nodes typed by CAMEO actor codes across Government, Military, Religious, and Opposition factions</li>
               <li>Louvain community detection (20 communities, modularity 0.10); PageRank + HITS composite influence scoring</li>
-              <li>Daily z-score anomaly detection surfacing 15 event spikes including the Nov. 4, 1979 US Embassy hostage crisis; interactive Dash + Cytoscape dashboard with timeline and influence panels</li>
+              <li>Daily z-score anomaly detection surfacing 15 event spikes including the Nov. 4, 1979 US Embassy hostage crisis; interactive Dash + Cytoscape dashboard</li>
             </ul>
             <div className="pcard__tags">
               <span className="ptag">Python</span>
@@ -170,47 +177,49 @@ export default function Home() {
               <span className="ptag">SQLite</span>
               <span className="ptag">Graph Analytics</span>
             </div>
-            <span className="pcard__link pcard__link--private">Private Repository</span>
+            <span className="pcard__link pcard__link--private">Private</span>
           </div>
 
         </div>
 
+        {/* mini projects */}
         <div className="proj-mini">
           <div className="pmini">
-            <div className="pmini__name">FishTank Poker</div>
-            <p className="pmini__desc">Multiplayer poker with real-time betting, live chat, and MCP AI opponents.</p>
+            <div className="pmini__name">Neural Network from Scratch</div>
+            <p className="pmini__desc">Feedforward neural network built from scratch using only NumPy. No ML frameworks.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
-              <span className="ptag">TypeScript</span><span className="ptag">React</span><span className="ptag">WebSockets</span>
+              <span className="ptag">Python</span><span className="ptag">NumPy</span><span className="ptag">Backprop</span>
             </div>
-            <a href="https://github.com/benfarsi/FishTankPoker" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://github.com/benfarsi/neural-network-from-scratch" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
           <div className="pmini">
-            <div className="pmini__name">StudyBuddy</div>
-            <p className="pmini__desc">AI study app: upload notes, generate flashcards, get quizzed via Claude API.</p>
+            <div className="pmini__name">Transformer from Scratch</div>
+            <p className="pmini__desc">Full transformer architecture in pure Python. Attention, positional encoding, multi-head — no frameworks.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
-              <span className="ptag">React Native</span><span className="ptag">Expo</span><span className="ptag">Claude API</span>
+              <span className="ptag">Python</span><span className="ptag">Attention</span><span className="ptag">NLP</span>
             </div>
-            <a href="https://github.com/benfarsi/StudyBuddy" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://github.com/benfarsi/transformer-from-scratch" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
           <div className="pmini">
-            <div className="pmini__name">PokerSocial</div>
-            <p className="pmini__desc">Social poker platform with profiles, leaderboards, tournament brackets, and full auth.</p>
+            <div className="pmini__name">TCP Load Balancer</div>
+            <p className="pmini__desc">Layer-4 TCP proxy in Go using raw Linux epoll. Sustains 50k concurrent connections with round-robin and least-connections scheduling.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
-              <span className="ptag">Next.js</span><span className="ptag">Supabase</span><span className="ptag">TypeScript</span>
-            </div>
-            <a href="https://github.com/benfarsi/PokerSocial" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
-          </div>
-          <div className="pmini">
-            <div className="pmini__name">CodeCrafters</div>
-            <p className="pmini__desc">Rebuilding DNS resolvers, HTTP servers, Redis, and Git from scratch.</p>
-            <div className="pcard__tags" style={{ marginBottom: "14px" }}>
-              <span className="ptag">Go</span><span className="ptag">C</span><span className="ptag">Python</span>
+              <span className="ptag">Go</span><span className="ptag">Linux</span><span className="ptag">epoll</span><span className="ptag">TCP</span>
             </div>
             <a href="https://github.com/benfarsi" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+          <div className="pmini">
+            <div className="pmini__name">Ingestion Engine</div>
+            <p className="pmini__desc">Concurrent ingestion service sustaining 20k req/s. Worker pools, connection pooling, p95 latency cut 35% via pprof profiling.</p>
+            <div className="pcard__tags" style={{ marginBottom: "14px" }}>
+              <span className="ptag">Go</span><span className="ptag">PostgreSQL</span><span className="ptag">pprof</span>
+            </div>
+            <a href="https://github.com/benfarsi/ingestion-engine" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
         </div>
       </section>
 
+      {/* STACK */}
       <section id="skills" className="section">
         <div className="sec-header">
           <span className="sec-index">02</span>
@@ -229,52 +238,75 @@ export default function Home() {
           </div>
           <div className="sgroup">
             <div className="sgroup__label">ML &amp; Modeling</div>
-            <Skill name="PyTorch"                      dots={4} />
-            <Skill name="XGBoost / scikit-learn"       dots={5} />
-            <Skill name="Time-series / Anomaly Det."   dots={4} />
-            <Skill name="Model Predictive Control"     dots={3} />
-            <Skill name="Monte Carlo Methods"          dots={3} />
+            <Skill name="PyTorch"                     dots={4} />
+            <Skill name="XGBoost / scikit-learn"      dots={5} />
+            <Skill name="Time-series / Anomaly Det."  dots={4} />
+            <Skill name="Model Predictive Control"    dots={3} />
+            <Skill name="Monte Carlo Methods"         dots={3} />
           </div>
           <div className="sgroup">
             <div className="sgroup__label">Embedded &amp; Hardware</div>
-            <Skill name="ESP32 Firmware"             dots={4} />
-            <Skill name="I2C / SPI / UART"           dots={4} />
-            <Skill name="Sensor Integration"         dots={4} />
-            <Skill name="Hardware Bring-up"          dots={3} />
-            <Skill name="3D Printing / Design"       dots={3} />
+            <Skill name="ESP32 Firmware"          dots={4} />
+            <Skill name="I2C / SPI / UART"        dots={4} />
+            <Skill name="Sensor Integration"      dots={4} />
+            <Skill name="Hardware Bring-up"       dots={3} />
+            <Skill name="3D Printing / Design"    dots={3} />
           </div>
           <div className="sgroup">
             <div className="sgroup__label">Infrastructure &amp; Systems</div>
-            <Skill name="Docker"                       dots={4} />
-            <Skill name="PostgreSQL / SQLite"          dots={4} />
-            <Skill name="Linux / POSIX"                dots={5} />
-            <Skill name="Multithreading / Low-lat I/O" dots={4} />
-            <Skill name="Flask / React Native"         dots={4} />
+            <Skill name="Docker"                        dots={4} />
+            <Skill name="PostgreSQL / SQLite"           dots={4} />
+            <Skill name="Linux / POSIX"                 dots={5} />
+            <Skill name="Multithreading / Low-lat I/O"  dots={4} />
+            <Skill name="Flask / React Native"          dots={4} />
           </div>
         </div>
       </section>
 
+      {/* EXPERIENCE */}
       <section id="experience" className="section">
         <div className="sec-header">
           <span className="sec-index">03</span>
           <span className="sec-label">Experience &amp; Education</span>
           <div className="sec-rule" />
         </div>
-        <div className="exp-card">
-          <div>
-            <div className="exp__role">Technical Mentor, Embedded Systems &amp; Prototyping</div>
-            <div className="exp__org">Centre for Entrepreneurship and Engineering Design (CEED) · University of Ottawa</div>
-            <p className="exp__desc">
-              Mentored engineering students through firmware debugging, peripheral integration (I2C, SPI, UART),
-              and hardware bring-up in CEED&apos;s Makerspace. Guided hardware/software co-design across multiple
-              student teams, accelerating prototype iteration under tight competition deadlines.
-            </p>
-          </div>
-          <div className="exp__meta">
-            <div className="exp__date">Sep 2024 · Present</div>
-            <div className="exp__loc">Ottawa, ON</div>
-          </div>
+
+        <div className="exp-list">
+
+          <ExpCard
+            role="Technical Mentor, Embedded Systems &amp; Prototyping"
+            org="Centre for Entrepreneurship and Engineering Design (CEED) · University of Ottawa"
+            date="Sep 2024 · Present"
+            loc="Ottawa, ON"
+            desc="Mentored engineering students through firmware debugging, peripheral integration (I2C, SPI, UART), and hardware bring-up in CEED's Makerspace. Guided hardware/software co-design across multiple student teams under tight competition deadlines."
+          />
+
+          <ExpCard
+            role="Field Technician"
+            org="Commercial Construction"
+            date="2022 · 2023"
+            loc="Ottawa, ON"
+            desc="Performed skilled technical work on large-scale commercial construction sites. Operated and maintained heavy equipment, executed precision installations to spec, and consistently delivered under physically demanding, deadline-driven conditions."
+          />
+
+          <ExpCard
+            role="Competitive Soccer Coach"
+            org="Ottawa South United"
+            date="2020 · 2025"
+            loc="Ottawa, ON"
+            desc="Coached 500+ youth athletes across competitive recreational programs. Designed training sessions, managed player development pipelines, and coordinated directly with parents and club staff across five seasons."
+          />
+
+          <ExpCard
+            role="Founder, Benny Blends"
+            org="Independent · Mobile Barbershop"
+            date="2018 · Present"
+            loc="Ottawa, ON"
+            desc="Built and operated a barbershop out of a home studio while in school full-time. Cut thousands of clients, generated $40,000+ in revenue ($20,000 in peak year), and managed all scheduling, client relations, and marketing independently."
+          />
+
         </div>
+
         <div className="edu-card">
           <div>
             <div className="edu__school">University of Ottawa</div>
@@ -287,6 +319,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* CONTACT */}
       <section id="contact" className="section">
         <div className="sec-header">
           <span className="sec-index">04</span>
@@ -305,7 +338,7 @@ export default function Home() {
 
       <footer className="site-footer">
         <div className="site-footer__id">BF. · BENFARSI.COM</div>
-        <div className="site-footer__copy">© 2026 Ben Farsijani</div>
+        <div className="site-footer__copy">© 2026 Benjamin Farsijani</div>
       </footer>
     </>
   );
@@ -324,11 +357,28 @@ function Skill({ name, dots }: { name: string; dots: number }) {
   );
 }
 
+function ExpCard({ role, org, date, loc, desc }: {
+  role: string; org: string; date: string; loc: string; desc: string;
+}) {
+  return (
+    <div className="exp-card">
+      <div>
+        <div className="exp__role" dangerouslySetInnerHTML={{ __html: role }} />
+        <div className="exp__org">{org}</div>
+        <p className="exp__desc">{desc}</p>
+      </div>
+      <div className="exp__meta">
+        <div className="exp__date">{date}</div>
+        <div className="exp__loc">{loc}</div>
+      </div>
+    </div>
+  );
+}
+
 function DancingKirby() {
   const [mood, setMood]     = useState<"idle" | "spin" | "bounce" | "wave">("idle");
   const [clicks, setClicks] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const MOODS: Array<"spin" | "bounce" | "wave"> = ["spin", "bounce", "wave"];
 
   const handleClick = useCallback(() => {
@@ -342,13 +392,10 @@ function DancingKirby() {
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const label =
-    mood === "spin"   ? "hey!" :
-    mood === "bounce" ? "hired?" :
-    mood === "wave"   ? ":3" : "click me";
+  const label = mood === "spin" ? "hey!" : mood === "bounce" ? "hired?" : mood === "wave" ? ":3" : "click me";
 
   return (
-    <div className="kirby-wrap" onClick={handleClick} title="click me">
+    <div className="kirby-wrap" onClick={handleClick}>
       <div className="kirby-box">
         <div className="kirby-box__bar">
           <span className="kirby-dot" /><span className="kirby-dot" /><span className="kirby-dot" />
@@ -356,7 +403,7 @@ function DancingKirby() {
         </div>
         <div className="kirby-stage">
           <div className={`kirby-char kirby-char--${mood}`}>
-            <svg width="88" height="88" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+            <svg width="80" height="80" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
               <ellipse cx="48" cy="58" rx="38" ry="33" fill="#FF69B4"/>
               <ellipse cx="23" cy="64" rx="11" ry="7" fill="#FF1493" opacity=".45"/>
               <ellipse cx="73" cy="64" rx="11" ry="7" fill="#FF1493" opacity=".45"/>
