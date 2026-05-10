@@ -102,8 +102,7 @@ export default function Home() {
               <span className="pcard__badge badge-gold">1st Place · $500 Prize</span>
             </div>
             <p className="pcard__desc">
-              Deployed <em>IoT environmental monitoring system</em> for early childcare at the University of Ottawa,
-              running continuously in a live classroom for several months.
+              Deployed <em>IoT environmental monitoring system</em> for early childcare at the University of Ottawa.
             </p>
             <ul className="pcard__bullets">
               <li>Wall-mounted ESP32 integrating BME680 (temp, humidity, VOC) and MAX9814 (sound) over I2C; lithium-battery-powered with persistent WiFi streaming</li>
@@ -289,14 +288,6 @@ export default function Home() {
         <div className="exp-list">
 
           <ExpCard
-            role="Technical Mentor, Embedded Systems &amp; Prototyping"
-            org="Centre for Entrepreneurship and Engineering Design (CEED) · University of Ottawa"
-            date="Sep 2024 · Present"
-            loc="Ottawa, ON"
-            desc="Mentored engineering students through firmware debugging, peripheral integration (I2C, SPI, UART), and hardware bring-up in CEED's Makerspace. Guided hardware/software co-design across multiple student teams under tight competition deadlines."
-          />
-
-          <ExpCard
             role="Field Technician"
             org="TPH Plumbing &amp; Heating"
             date="2022 · 2023"
@@ -317,7 +308,7 @@ export default function Home() {
             org="Independent · Mobile Barbershop"
             date="2018 · Present"
             loc="Ottawa, ON"
-            desc="Built and operated a barbershop out of a home studio while in school full-time. Cut thousands of clients, generated $40,000+ in revenue ($20,000 in peak year), and managed all scheduling, client relations, and marketing independently."
+            desc="Built and operated a barbershop out of a home studio while in school full-time. Cut thousands of clients, generated $25,000+ cumulative revenue, and managed all scheduling, client relations, and marketing independently."
           />
 
         </div>
