@@ -98,6 +98,31 @@ export default function Home() {
 
           <div className="pcard">
             <div className="pcard__top">
+              <span className="pcard__name">Sage</span>
+              <span className="pcard__badge badge-blue">Production</span>
+            </div>
+            <p className="pcard__desc">
+              Production-grade <em>agentic RAG system</em> that ingests large-scale networking documentation
+              and answers natural-language queries over complex technical content.
+            </p>
+            <ul className="pcard__bullets">
+              <li>Hybrid retrieval combining dense semantic search (pgvector + text-embedding-3-large) with BM25 sparse retrieval, merged via reciprocal rank fusion; sub-100ms p95 latency over 100k+ embedded chunks</li>
+              <li>Multi-step agentic loop with tool use that dynamically re-queries and synthesizes across document chunks before generating a final grounded answer</li>
+              <li>Fully containerized ingestion and query pipelines in Docker</li>
+            </ul>
+            <div className="pcard__tags">
+              <span className="ptag">Python</span>
+              <span className="ptag">LangChain</span>
+              <span className="ptag">pgvector</span>
+              <span className="ptag">Claude API</span>
+              <span className="ptag">PostgreSQL</span>
+              <span className="ptag">Docker</span>
+            </div>
+            <a href="https://github.com/benfarsi/sage" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+
+          <div className="pcard">
+            <div className="pcard__top">
               <span className="pcard__name">Celsius</span>
               <span className="pcard__badge badge-gold">1st Place · $500 Prize</span>
             </div>
@@ -208,7 +233,7 @@ export default function Home() {
           </div>
           <div className="pmini">
             <div className="pmini__name">Transformer from Scratch</div>
-            <p className="pmini__desc">Full transformer architecture in pure Python. Attention, positional encoding, multi-head — no frameworks.</p>
+            <p className="pmini__desc">Full transformer architecture in pure Python. Attention, positional encoding, multi-head, no frameworks.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
               <span className="ptag">Python</span><span className="ptag">Attention</span><span className="ptag">NLP</span>
             </div>
@@ -290,15 +315,15 @@ export default function Home() {
           <ExpCard
             role="Field Technician"
             org="TPH Plumbing &amp; Heating"
-            date="2022 · 2023"
+            date="Aug 2025 · Feb 2026"
             loc="Ottawa, ON"
-            desc="Performed skilled technical work on large-scale commercial construction sites. Operated and maintained heavy equipment, executed precision installations to spec, and consistently delivered under physically demanding, deadline-driven conditions."
+            desc="Worked on large commercial job sites (crews of 10+, buildings up to 14 stories) alongside licensed plumbers and gas technicians: cut, threaded, soldered, and fit pipe, coordinating daily with electricians, HVAC, and general contractors to keep multi-trade work on schedule."
           />
 
           <ExpCard
             role="Competitive Soccer Coach"
             org="Ottawa South United"
-            date="2020 · 2025"
+            date="Mar 2019 · July 2025"
             loc="Ottawa, ON"
             desc="Coached 500+ youth athletes across competitive recreational programs. Designed training sessions, managed player development pipelines, and coordinated directly with parents and club staff across five seasons."
           />
@@ -320,7 +345,7 @@ export default function Home() {
           </div>
           <div>
             <div className="edu__gpa">GPA 3.7 / 4.0</div>
-            <div className="edu__date">Sep 2023 · May 2027</div>
+            <div className="edu__date">Sep 2023 · May 2028</div>
           </div>
         </div>
       </section>

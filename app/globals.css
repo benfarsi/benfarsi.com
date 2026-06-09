@@ -13,6 +13,8 @@ html { scroll-behavior: smooth; }
   --muted:     #7a96b4;
   --dim:       #3a5068;
   --accent:    #4a8de8;
+  --accent-2:  #5fd0ff;
+  --accent-grad: linear-gradient(120deg, #4a8de8 0%, #5fd0ff 100%);
   --accent-lo: rgba(74, 141, 232, 0.10);
   --accent-md: rgba(74, 141, 232, 0.22);
   --gold:      #f0b429;
@@ -154,7 +156,12 @@ body::before {
   font-weight: 300; line-height: 1.0;
   letter-spacing: -0.03em; color: var(--text); margin-bottom: 26px;
 }
-.hero__name strong { font-weight: 700; }
+.hero__name strong {
+  font-weight: 700;
+  background: var(--accent-grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
 .hero__tagline {
   font-size: clamp(15px, 1.7vw, 17px);
   font-weight: 300; color: var(--muted);
@@ -185,11 +192,11 @@ body::before {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
   padding: 12px 26px;
-  background: var(--accent); color: var(--bg);
+  background: var(--accent-grad); color: var(--bg);
   border: 1px solid var(--accent);
   transition: all 0.18s; cursor: pointer; display: inline-block;
 }
-.btn-primary:hover { background: transparent; color: var(--accent); }
+.btn-primary:hover { background: transparent; color: var(--accent-2); border-color: var(--accent-2); }
 .btn-ghost {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.1em; text-transform: uppercase;
@@ -387,7 +394,7 @@ body::before {
   .proj-mini { grid-template-columns: 1fr; }
   .skills-grid { grid-template-columns: 1fr; }
 
-  /* cleaner cards on mobile — kill the bullet borders */
+  /* cleaner cards on mobile: kill the bullet borders */
   .pcard__bullets li,
   .pcard__bullets li:first-child {
     border: 0 !important;

@@ -32,7 +32,7 @@ export const projects: Project[] = [
     category: "embedded · iot",
     title: "Embedded Environmental Monitoring Device",
     summary:
-      "Wall-mounted, lithium battery-powered ESP32 with BME680 (temp/humidity/AQI) and MAX9814 (noise) designed for early childcare monitoring — live data streamed to the Celsius mobile app via WiFi with 3D printed interactive accessories. Redeploy planned for new childcare centre location.",
+      "Wall-mounted, lithium battery-powered ESP32 with BME680 (temp/humidity/AQI) and MAX9814 (noise) designed for early childcare monitoring, with live data streamed to the Celsius mobile app via WiFi with 3D printed interactive accessories. Redeploy planned for new childcare centre location.",
     tech: ["C/C++", "ESP32", "I2C", "BME680", "MAX9814", "WiFi", "Lithium Battery", "3D Printing"],
     highlights: [
       "Designed and deployed a wall-mounted, lithium battery-powered ESP32 device integrating a BME680 and MAX9814 over I2C to continuously monitor classroom environmental conditions in an early childcare home.",
@@ -65,7 +65,7 @@ export const projects: Project[] = [
       "Epoll-based TCP proxy in Go sustaining 50,000 concurrent connections with round-robin and least-connections scheduling. Raw Linux epoll event loop, zero per-event allocations, N worker goroutines sharing one epoll fd.",
     tech: ["Go", "Linux", "epoll", "TCP", "syscall", "Round-Robin", "Least-Connections", "Non-blocking I/O"],
     highlights: [
-      "Built a Layer-4 TCP load balancer in Go using raw Linux epoll syscalls — single shared epoll fd multiplexed across N IO worker goroutines, sustaining 50,000 concurrent connections under synthetic load.",
+      "Built a Layer-4 TCP load balancer in Go using raw Linux epoll syscalls: a single shared epoll fd multiplexed across N IO worker goroutines, sustaining 50,000 concurrent connections under synthetic load.",
       "Implemented two lock-free scheduling algorithms: atomic round-robin and least-connections, selectable at runtime with zero mutex overhead.",
       "Achieved zero per-event heap allocations by giving each worker goroutine a dedicated scratch buffer, eliminating GC pressure at high connection counts and keeping p99 forwarding latency stable under load.",
     ],
