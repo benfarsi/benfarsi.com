@@ -4,12 +4,22 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+const TYPED_PHRASES = [
+  "real-time ML infrastructure",
+  "agentic RAG pipelines",
+  "embedded IoT systems",
+  "threat network analytics",
+  "low-latency Go services",
+];
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const closeMenu = () => setMenuOpen(false);
 
+  // section highlighting
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
     const io = new IntersectionObserver(
@@ -20,11 +30,69 @@ export default function Home() {
     return () => io.disconnect();
   }, []);
 
+  // scroll progress bar
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      setProgress(max > 0 ? h.scrollTop / max : 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // cursor spotlight
+  useEffect(() => {
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    if (!fine) return;
+    const onMove = (e: MouseEvent) => {
+      document.documentElement.style.setProperty("--spot-x", `${e.clientX}px`);
+      document.documentElement.style.setProperty("--spot-y", `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
+  // scroll-reveal
+  useEffect(() => {
+    const els = document.querySelectorAll("[data-reveal]");
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-revealed");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  // mouse-tracked glow on cards
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      const card = (e.target as HTMLElement).closest(".pcard, .pmini, .sgroup") as HTMLElement | null;
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      card.style.setProperty("--my", `${e.clientY - r.top}px`);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+
   const isActive = (id: string) => activeSection === id ? "active" : "";
 
   return (
     <>
+      <div className="cursor-spotlight" aria-hidden="true" />
+
       <nav className="nav">
+        <div className="nav__progress" style={{ transform: `scaleX(${progress})` }} />
         <div className="nav__inner">
           <Link href="/" className="nav__logo">BF<span>.</span></Link>
           <ul className="nav__links">
@@ -54,13 +122,15 @@ export default function Home() {
 
       {/* HERO */}
       <section id="hero" className="hero">
+        <div className="hero__orb hero__orb--1" aria-hidden="true" />
+        <div className="hero__orb hero__orb--2" aria-hidden="true" />
         <div className="hero__inner">
           <div className="hero__left">
             <div className="hero__eyebrow">Computer Science · University of Ottawa · 3.7 GPA</div>
             <h1 className="hero__name">Benjamin<br /><strong>Farsijani</strong></h1>
             <p className="hero__tagline">
-              Building systems across <em>real-time ML infrastructure</em>,{" "}
-              <em>embedded IoT</em>, and <em>threat network analytics</em>.
+              Building systems across{" "}
+              <Typewriter phrases={TYPED_PHRASES} />
             </p>
             <div className="hero__ctas">
               <a href="#projects" className="btn-primary">View Projects</a>
@@ -88,7 +158,7 @@ export default function Home() {
 
       {/* PROJECTS */}
       <section id="projects" className="section">
-        <div className="sec-header">
+        <div className="sec-header" data-reveal>
           <span className="sec-index">01</span>
           <span className="sec-label">Projects</span>
           <div className="sec-rule" />
@@ -96,10 +166,9 @@ export default function Home() {
 
         <div className="proj-main">
 
-          <div className="pcard">
+          <div className="pcard" data-reveal>
             <div className="pcard__top">
               <span className="pcard__name">Sage</span>
-              <span className="pcard__badge badge-blue">Production</span>
             </div>
             <p className="pcard__desc">
               Production-grade <em>agentic RAG system</em> that ingests large-scale networking documentation
@@ -121,7 +190,31 @@ export default function Home() {
             <a href="https://github.com/benfarsi/sage" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
 
-          <div className="pcard">
+          <div className="pcard" data-reveal>
+            <div className="pcard__top">
+              <span className="pcard__name">MedOffice AI</span>
+              <span className="pcard__badge badge-gold">Hackers &amp; Healers 2026</span>
+            </div>
+            <p className="pcard__desc">
+              Local-first <em>clinical AI assistant</em> for Ontario primary care — agentic RAG pipeline keeping all patient data on-device.
+            </p>
+            <ul className="pcard__bullets">
+              <li>Medical billing-code agent reaching 92% accuracy across 35 labeled test cases; 85% latency reduction (4.8s → 0.7s) via hybrid retrieval combining dense embeddings with BM25 sparse search and reciprocal rank fusion</li>
+              <li>AI form filler using local OCR (PyMuPDF + Tesseract) to extract any medical form structure and fill all fields from FHIR-like patient records via DeepSeek-R1; renders approved output to a downloadable PDF</li>
+              <li>Smart scheduler ranking appointments by a 12-domain clinical risk scorer (diabetes, cardiac, renal, mental health, and more); full FastAPI backend with auth, patient records, and dashboard stats</li>
+            </ul>
+            <div className="pcard__tags">
+              <span className="ptag">Python</span>
+              <span className="ptag">FastAPI</span>
+              <span className="ptag">Ollama</span>
+              <span className="ptag">DeepSeek-R1</span>
+              <span className="ptag">RAG</span>
+              <span className="ptag">SQLite</span>
+            </div>
+            <a href="https://github.com/benfarsi/medofficeai" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+
+          <div className="pcard" data-reveal>
             <div className="pcard__top">
               <span className="pcard__name">Celsius</span>
               <span className="pcard__badge badge-gold">1st Place · $500 Prize</span>
@@ -145,10 +238,9 @@ export default function Home() {
             <a href="https://github.com/benfarsi/environmental-sensor" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
 
-          <div className="pcard">
+          <div className="pcard" data-reveal>
             <div className="pcard__top">
               <span className="pcard__name">Benny</span>
-              <span className="pcard__badge badge-blue">Production</span>
             </div>
             <p className="pcard__desc">
               End-to-end <em>algorithmic crypto trading system</em> ingesting live market data across 6 assets,
@@ -170,7 +262,7 @@ export default function Home() {
             <span className="pcard__link pcard__link--private">Private</span>
           </div>
 
-          <div className="pcard">
+          <div className="pcard" data-reveal>
             <div className="pcard__top">
               <span className="pcard__name">Thermal MPC</span>
               <span className="pcard__badge badge-gray">Research</span>
@@ -194,7 +286,7 @@ export default function Home() {
             <a href="https://github.com/benfarsi" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
 
-          <div className="pcard">
+          <div className="pcard" data-reveal>
             <div className="pcard__top">
               <span className="pcard__name">Azadi</span>
               <span className="pcard__badge badge-blue">Intel Platform</span>
@@ -219,11 +311,35 @@ export default function Home() {
             <span className="pcard__link pcard__link--private">Private</span>
           </div>
 
+          <div className="pcard" data-reveal>
+            <div className="pcard__top">
+              <span className="pcard__name">Cisco Networking Homelab</span>
+              <span className="pcard__badge badge-gray">Infrastructure</span>
+            </div>
+            <p className="pcard__desc">
+              Physical <em>enterprise networking lab</em> built from Cisco hardware — OSPF, BGP, IPsec VPN, and QoS under real traffic conditions.
+            </p>
+            <ul className="pcard__bullets">
+              <li>5-device lab: ASA 5520 firewall, two 2911 ISRs, and an L3 switch; configured OSPF multi-area, eBGP peering, GRE tunnels, IPsec site-to-site VPN, and QoS policies end-to-end</li>
+              <li>Proxmox hypervisor running VMs bridged into the physical network; site-to-site VPN tunneled to a cloud VPS for realistic WAN simulation</li>
+              <li>Automated device polling via Netmiko/SSH script replacing 15+ manual CLI commands; 22 pytest assertions validating interface state, routing tables, and VPN tunnel status</li>
+            </ul>
+            <div className="pcard__tags">
+              <span className="ptag">Cisco ASA</span>
+              <span className="ptag">OSPF / BGP</span>
+              <span className="ptag">IPsec VPN</span>
+              <span className="ptag">Proxmox</span>
+              <span className="ptag">Netmiko</span>
+              <span className="ptag">Python</span>
+            </div>
+            <a href="https://github.com/benfarsi/homelab" className="pcard__link" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
+
         </div>
 
         {/* mini projects */}
         <div className="proj-mini">
-          <div className="pmini">
+          <div className="pmini" data-reveal>
             <div className="pmini__name">Neural Network from Scratch</div>
             <p className="pmini__desc">Feedforward neural network built from scratch using only NumPy. No ML frameworks.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
@@ -231,7 +347,7 @@ export default function Home() {
             </div>
             <a href="https://github.com/benfarsi/neural-network-from-scratch" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
-          <div className="pmini">
+          <div className="pmini" data-reveal>
             <div className="pmini__name">Transformer from Scratch</div>
             <p className="pmini__desc">Full transformer architecture in pure Python. Attention, positional encoding, multi-head, no frameworks.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
@@ -239,7 +355,7 @@ export default function Home() {
             </div>
             <a href="https://github.com/benfarsi/transformer-from-scratch" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
-          <div className="pmini">
+          <div className="pmini" data-reveal>
             <div className="pmini__name">TCP Load Balancer</div>
             <p className="pmini__desc">Layer-4 TCP proxy in Go using raw Linux epoll. Sustains 50k concurrent connections with round-robin and least-connections scheduling.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
@@ -247,7 +363,7 @@ export default function Home() {
             </div>
             <a href="https://github.com/benfarsi" className="pmini__link" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
-          <div className="pmini">
+          <div className="pmini" data-reveal>
             <div className="pmini__name">Ingestion Engine</div>
             <p className="pmini__desc">Concurrent ingestion service sustaining 20k req/s. Worker pools, connection pooling, p95 latency cut 35% via pprof profiling.</p>
             <div className="pcard__tags" style={{ marginBottom: "14px" }}>
@@ -260,13 +376,13 @@ export default function Home() {
 
       {/* STACK */}
       <section id="skills" className="section">
-        <div className="sec-header">
+        <div className="sec-header" data-reveal>
           <span className="sec-index">02</span>
           <span className="sec-label">Technical Stack</span>
           <div className="sec-rule" />
         </div>
         <div className="skills-grid">
-          <div className="sgroup">
+          <div className="sgroup" data-reveal>
             <div className="sgroup__label">Languages</div>
             <Skill name="Python"           dots={5} />
             <Skill name="C / C++"          dots={4} />
@@ -275,7 +391,7 @@ export default function Home() {
             <Skill name="Rust"             dots={2} />
             <Skill name="SQL / Bash"       dots={4} />
           </div>
-          <div className="sgroup">
+          <div className="sgroup" data-reveal>
             <div className="sgroup__label">ML &amp; Modeling</div>
             <Skill name="PyTorch"                     dots={4} />
             <Skill name="XGBoost / scikit-learn"      dots={5} />
@@ -283,7 +399,7 @@ export default function Home() {
             <Skill name="Model Predictive Control"    dots={3} />
             <Skill name="Monte Carlo Methods"         dots={3} />
           </div>
-          <div className="sgroup">
+          <div className="sgroup" data-reveal>
             <div className="sgroup__label">Embedded &amp; Hardware</div>
             <Skill name="ESP32 Firmware"          dots={4} />
             <Skill name="I2C / SPI / UART"        dots={4} />
@@ -291,7 +407,7 @@ export default function Home() {
             <Skill name="Hardware Bring-up"       dots={3} />
             <Skill name="3D Printing / Design"    dots={3} />
           </div>
-          <div className="sgroup">
+          <div className="sgroup" data-reveal>
             <div className="sgroup__label">Infrastructure &amp; Systems</div>
             <Skill name="Docker"                        dots={4} />
             <Skill name="PostgreSQL / SQLite"           dots={4} />
@@ -304,7 +420,7 @@ export default function Home() {
 
       {/* EXPERIENCE */}
       <section id="experience" className="section">
-        <div className="sec-header">
+        <div className="sec-header" data-reveal>
           <span className="sec-index">03</span>
           <span className="sec-label">Experience &amp; Education</span>
           <div className="sec-rule" />
@@ -338,10 +454,10 @@ export default function Home() {
 
         </div>
 
-        <div className="edu-card">
+        <div className="edu-card" data-reveal>
           <div>
             <div className="edu__school">University of Ottawa</div>
-            <div className="edu__degree">Honours B.Sc., Computer Science</div>
+            <div className="edu__degree">Honours B.Sc., Computer Science · Dean&apos;s Honour List</div>
           </div>
           <div>
             <div className="edu__gpa">GPA 3.7 / 4.0</div>
@@ -352,18 +468,20 @@ export default function Home() {
 
       {/* CONTACT */}
       <section id="contact" className="section">
-        <div className="sec-header">
+        <div className="sec-header" data-reveal>
           <span className="sec-index">04</span>
           <span className="sec-label">Contact</span>
           <div className="sec-rule" />
         </div>
-        <h2 className="contact__heading">Let&apos;s connect.</h2>
-        <p className="contact__sub">Open to internships, research collaborations, and interesting problems.</p>
-        <div className="contact__links">
-          <a href="mailto:farsijaniben@gmail.com"    className="btn-primary">Email</a>
-          <a href="https://linkedin.com/in/benfarsi" className="btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://github.com/benfarsi"      className="btn-ghost" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="/resume.pdf"                      className="btn-ghost" target="_blank" rel="noopener noreferrer">Resume</a>
+        <div data-reveal>
+          <h2 className="contact__heading">Let&apos;s connect.</h2>
+          <p className="contact__sub">Open to internships, research collaborations, and interesting problems.</p>
+          <div className="contact__links">
+            <a href="mailto:farsijaniben@gmail.com"    className="btn-primary">Email</a>
+            <a href="https://linkedin.com/in/benfarsi" className="btn-ghost" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/benfarsi"      className="btn-ghost" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="/resume.pdf"                      className="btn-ghost" target="_blank" rel="noopener noreferrer">Resume</a>
+          </div>
         </div>
       </section>
 
@@ -372,6 +490,38 @@ export default function Home() {
         <div className="site-footer__copy">© 2026 Benjamin Farsijani</div>
       </footer>
     </>
+  );
+}
+
+function Typewriter({ phrases }: { phrases: string[] }) {
+  const [text, setText] = useState("");
+  const [idx, setIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const phrase = phrases[idx % phrases.length];
+    let delay = deleting ? 30 : 55;
+    if (!deleting && text === phrase) delay = 2200;      // pause at full phrase
+    else if (deleting && text === "") delay = 350;       // pause before next
+
+    const t = setTimeout(() => {
+      if (!deleting && text === phrase) {
+        setDeleting(true);
+      } else if (deleting && text === "") {
+        setDeleting(false);
+        setIdx(i => i + 1);
+      } else {
+        setText(phrase.slice(0, text.length + (deleting ? -1 : 1)));
+      }
+    }, delay);
+    return () => clearTimeout(t);
+  }, [text, deleting, idx, phrases]);
+
+  return (
+    <span className="typewriter">
+      <em>{text}</em>
+      <span className="typewriter__caret" aria-hidden="true" />
+    </span>
   );
 }
 
@@ -392,7 +542,7 @@ function ExpCard({ role, org, date, loc, desc }: {
   role: string; org: string; date: string; loc: string; desc: string;
 }) {
   return (
-    <div className="exp-card">
+    <div className="exp-card" data-reveal>
       <div>
         <div className="exp__role" dangerouslySetInnerHTML={{ __html: role }} />
         <div className="exp__org">{org}</div>
@@ -405,4 +555,3 @@ function ExpCard({ role, org, date, loc, desc }: {
     </div>
   );
 }
-
